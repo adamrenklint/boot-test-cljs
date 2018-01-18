@@ -49,9 +49,10 @@
 (boot/deftask test-cljs
   "Run ClojureScript tests in Node.js"
   [n ns NS         #{sym} "Set of namespace symbols to include, defaults to all namespaces in :source-path"
-   x exclude-ns NS #{sym} "Set of namespace symbols to exclude"
-   i include REGEX regex  "Filter for namespaces to include"
-   e exclude REGEX regex  "Filter for namespaces to exclude"]
+   x exclude-ns NS         #{sym} "Set of namespace symbols to exclude"
+   i include REGEX         regex  "Filter for namespaces to include"
+   e exclude REGEX         regex  "Filter for namespaces to exclude"
+   c compiler-options OPTS edn    "Options to pass to the ClojureScript compiler"]
   (comp (boot/with-pre-wrap fileset
           (util/info "Generating ClojureScript test runner...\n")
           (let [tests  (namespaces->tests fileset ns exclude-ns include exclude)
@@ -63,4 +64,5 @@
               (io/make-parents)
               (spit source))
             (-> fileset (boot/add-resource tmp) boot/commit!)))
-        (eval-cljs :fn 'boot-test-cljs.runner/run-tests)))
+        (eval-cljs :fn 'boot-test-cljs.runner/run-tests
+                   :compiler-options compiler-options)))
